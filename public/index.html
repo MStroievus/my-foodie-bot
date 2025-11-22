@@ -142,6 +142,24 @@
       color: #333;
       border-bottom-left-radius: 4px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .message.bot .message-bubble strong {
+      font-weight: 600;
+      color: #667eea;
+    }
+
+    .message.bot .message-bubble a {
+      color: #667eea;
+      text-decoration: underline;
+      word-break: break-all;
+    }
+
+    .message.bot .message-bubble a:hover {
+      color: #764ba2;
     }
 
     .message.error .message-bubble {
@@ -260,13 +278,13 @@
       <div class="chat-container simple-chat">
         <div class="chat-header">
           <h2>💬 Простий чат</h2>
-          <p>Агент без пам'яті - кожен запит окремо</p>
+          <p>Агент без пам'яті чату</p>
         </div>
 
         <div class="messages" id="simpleMessages">
           <div class="message bot">
             <div class="message-bubble">
-              Привіт! Я ChefBot. Можу порадити рецепти! (без пам'яті)
+              Привіт! Я ChefBot. Можу порадити рецепти! Попробуй запитати мене щось.
             </div>
           </div>
         </div>
@@ -297,7 +315,7 @@
         <div class="messages" id="workflowMessages">
           <div class="message bot">
             <div class="message-bubble">
-              Привіт! Я ChefBot з пам'яттю. Я запам'ятаю наш діалог!
+              Привіт! Я ChefBot з пам'яттю. Я пам'ятаю ваші вподобання!
             </div>
           </div>
         </div>
@@ -427,7 +445,13 @@
 
       const bubble = document.createElement('div');
       bubble.className = 'message-bubble';
-      bubble.textContent = text;
+      
+      // Convert markdown-like formatting to HTML
+      if (type === 'bot') {
+        bubble.innerHTML = formatMarkdown(text);
+      } else {
+        bubble.textContent = text;
+      }
 
       messageDiv.appendChild(bubble);
       container.appendChild(messageDiv);
@@ -436,6 +460,41 @@
       container.scrollTop = container.scrollHeight;
 
       return messageDiv;
+    }
+
+    function formatMarkdown(text) {
+      // Escape HTML first to prevent XSS
+      let formatted = text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+
+      // Bold: **text** or __text__
+      formatted = formatted.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+      formatted = formatted.replace(/__(.+?)__/g, '<strong>$1</strong>');
+
+      // Italic: *text* or _text_ (but not ** or __)
+      formatted = formatted.replace(/(?<!\*)\*(?!\*)(.+?)\*(?!\*)/g, '<em>$1</em>');
+      formatted = formatted.replace(/(?<!_)_(?!_)(.+?)_(?!_)/g, '<em>$1</em>');
+
+      // Images: ![alt](url) - convert to clickable image links
+      formatted = formatted.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, 
+        '<div style="margin: 8px 0;"><a href="$2" target="_blank" style="color: #667eea; text-decoration: none; display: inline-block; padding: 4px 8px; background: #f0f0f0; border-radius: 4px;">🖼️ $1</a></div>');
+
+      // Links: [text](url)
+      formatted = formatted.replace(/\[([^\]]+)\]\(([^)]+)\)/g, 
+        '<a href="$2" target="_blank" style="color: #667eea; text-decoration: underline; word-break: break-all;">$1</a>');
+
+      // Line breaks: double line breaks = paragraph, single = br
+      formatted = formatted.replace(/\n\n+/g, '</p><p style="margin: 12px 0;">');
+      formatted = formatted.replace(/\n/g, '<br>');
+      formatted = '<p style="margin: 0;">' + formatted + '</p>';
+
+      // Numbered lists: 1. text, 2. text
+      formatted = formatted.replace(/(<br>|<\/p><p[^>]*>)(\d+)\.\s+([^<]+)/g, 
+        '$1<div style="margin: 8px 0 8px 20px; position: relative;"><span style="position: absolute; left: -20px; font-weight: 600; color: #667eea;">$2.</span>$3</div>');
+
+      return formatted;
     }
 
     function addTypingIndicator(container) {

@@ -25,6 +25,25 @@ export const chefBot = new Agent({
     2. Use the 'search-recipes' tool with the ENGLISH translation in the query parameter
     3. Always ensure the query parameter contains only English words
 
+    FORMATTING RULES for responses:
+    - When listing recipes, format each recipe on a NEW LINE
+    - Use numbered lists: 1. Recipe Name 2. Recipe Name 3. Recipe Name
+    - Add blank line between recipe name and description
+    - Make recipe names bold using **Recipe Name**
+    - Include image links using markdown: ![Recipe Name](image_url)
+    - Add proper spacing between items for readability
+
+    Example of good formatting:
+    "Ось кілька страв із бананами:
+
+    1. **Банановий хліб**
+    ![Банановий хліб](https://img.spoonacular.com/recipes/123.jpg)
+
+    2. **Банановий торт**
+    ![Банановий торт](https://img.spoonacular.com/recipes/456.jpg)
+
+    Якщо потрібні деталі, дайте знати!"
+
     Answer in Ukrainian language.
   `,
   model: "openai/gpt-4o-mini",
@@ -50,4 +69,3 @@ export const chefBot = new Agent({
   },
   
 });
-
