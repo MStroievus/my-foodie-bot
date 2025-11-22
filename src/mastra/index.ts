@@ -1,11 +1,12 @@
 import { Mastra } from "@mastra/core/mastra";
-import { DefaultExporter } from "@mastra/core/ai-tracing"; 
+import { DefaultExporter } from "@mastra/core/ai-tracing";
 import { LangfuseExporter } from "@mastra/langfuse";
 import { LibSQLStore } from "@mastra/libsql";
 import { PinoLogger } from "@mastra/loggers";
 import { chefBot } from "./agents/chefBot";
 import { safetyScorer } from "./scorers/safetyScorer";
 import { foodWorkflow } from "./workflows/foodWorkflow/foodWorkflow";
+import { apiRoutes } from "./routes/apiRoutes";
 
 export const mastra = new Mastra({
   agents: { chefBot,  },
@@ -38,5 +39,9 @@ export const mastra = new Mastra({
       },
     },
     configSelector: () => "langfuse",
+  },
+
+  server: {
+    apiRoutes
   },
 });
