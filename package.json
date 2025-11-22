@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "mastra dev",
     "build": "mastra build",
+    "postbuild": "mkdir -p .mastra/output/public && cp -r public/* .mastra/output/public/ || true",
     "start": "mastra start"
   },
   "keywords": [],
