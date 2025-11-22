@@ -321,7 +321,12 @@
   </div>
 
   <script>
-    const API_URL = 'http://localhost:4111';
+    // Dynamic API URL - works in both development and production
+    const API_URL = window.location.hostname === 'localhost' 
+      ? 'http://localhost:4111' 
+      : window.location.origin;
+
+    console.log('API URL:', API_URL);
 
     // Simple Chat Logic
     const simpleForm = document.getElementById('simpleForm');
