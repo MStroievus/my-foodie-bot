@@ -25,9 +25,6 @@ export const mastra = new Mastra({
     configs: {
       langfuse: {
         serviceName: "foodie-bot",
-        sampling: {
-          type: "always",
-        },
         includeInternalSpans: false,
         runtimeContextKeys: ["userId", "sessionId", "environment"],
         exporters: [
