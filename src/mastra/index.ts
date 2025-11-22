@@ -19,6 +19,10 @@ export const mastra = new Mastra({
 
   logger: new PinoLogger(),
 
+  bundler: {
+    externals: ["mem0ai"],
+  },
+
   observability: {
     default: {
       enabled: false,
