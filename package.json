@@ -25,6 +25,7 @@
     "@mastra/loggers": "^0.10.19",
     "@mastra/mem0": "^0.1.12",
     "@mastra/memory": "^0.15.11",
+    "@mastra/mongodb": "^0.14.9",
     "ai": "^5.0.95",
     "dotenv": "^17.2.3",
     "langfuse": "^3.38.6",

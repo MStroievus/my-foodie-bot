@@ -9,13 +9,26 @@ const recipeSchema = z.object({
 
 export const searchRecipesTool = createTool({
   id: "search-recipes",
-  description: "Searches for food recipes based on dish name or ingredients. Use this when the user asks for recipe ideas, wants to find dishes with specific ingredients, or needs recipes that match dietary restrictions (vegan, keto, vegetarian) or avoid allergens (gluten, nuts, dairy, etc.).",
-
-  // Input data: What the LLM should provide
+  description:
+    "Searches for food recipes based on dish name or ingredients. Use this when the user asks for recipe ideas, wants to find dishes with specific ingredients, adding mem0 inforamtion about dietary restrictions or allergies and aslways add it to the search query.",
   inputSchema: z.object({
-    query: z.string().describe("Name of the dish or main ingredient, for example: 'pasta', 'chicken', 'tomato soup'"),
-    intolerances: z.string().optional().describe("Allergens to exclude, comma-separated (e.g., 'gluten, peanut, dairy')"),
-    diet: z.string().optional().describe("Dietary restriction (e.g., 'vegetarian', 'vegan', 'ketogenic', 'paleo')"),
+    query: z
+      .string()
+      .describe(
+        "Name of the dish or main ingredient, for example: 'pasta', 'chicken', 'tomato soup'"
+      ),
+    intolerances: z
+      .string()
+      .optional()
+      .describe(
+        "Allergens to exclude, comma-separated (e.g., 'gluten, peanut, dairy')"
+      ),
+    diet: z
+      .string()
+      .optional()
+      .describe(
+        "Dietary restriction (e.g., 'vegetarian', 'vegan', 'ketogenic', 'paleo')"
+      ),
   }),
 
   // Output data: What we return to the LLM
@@ -34,30 +47,19 @@ export const searchRecipesTool = createTool({
     url.searchParams.append("apiKey", apiKey!);
     url.searchParams.append("query", query);
     url.searchParams.append("number", "3"); // Limit to 3 recipes to save tokens
-    
+
     if (intolerances) url.searchParams.append("intolerances", intolerances);
     if (diet) url.searchParams.append("diet", diet);
 
+    const response = await fetch(url.toString());
 
-    try {
-      const response = await fetch(url.toString());
-      
-      if (!response.ok) {
-        throw new Error(`Spoonacular API Error: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      return {
-        results: data.results.map((r: any) => ({
-          id: r.id,
-          title: r.title,
-          image: r.image
-        }))
-      };
-
-    } catch (error) {
-      console.error("Error fetching recipes:", error);
-      return { results: [] }; // Return empty array in case of error
-    }
+    const data = await response.json();
+    return {
+      results: data.results.map((r: any) => ({
+        id: r.id,
+        title: r.title,
+        image: r.image,
+      })),
+    };
   },
 });

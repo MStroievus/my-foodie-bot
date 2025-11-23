@@ -17,9 +17,9 @@ const mem0 = new Mem0Integration({
 // Tool for saving new memories
 export const mem0MemorizeTool = createTool({
   id: "mem0-memorize",
-  description: "Save information to mem0 so you can remember it later using the Mem0-remember tool.",
+  description: "Save ONLY user's permanent food preferences to mem0. DO NOT save temporary requests or what user wants right now. Save only: favorite ingredients, dietary restrictions (vegan, vegetarian), allergies, dislikes. Example: Save 'User loves shrimp' but NOT 'User wants pizza'.",
   inputSchema: z.object({
-    statement: z.string().describe("A statement to save into memory. Example: 'User is vegan'"),
+    statement: z.string().describe("A statement to save into memory. Example: 'User is vegan' or 'User loves shrimp'. DO NOT save temporary requests like 'User wants pizza'."),
   }),
   execute: async ({ context }) => {
     void mem0.createMemory(context.statement).then(() => {
